@@ -1,71 +1,71 @@
 from Perceptron import *
 import numpy as np
 
+def get_mse(n,weight_history,X,Y):
+    mse = []
+    itr = []
+    for idx,weights in enumerate(weight_history):
+        n.set_weights(weights)
+        this_mse = 0
+        for x,y in zip(X,Y):
+            tmse,reg = n.get_mse(x,y)
+            this_mse += (tmse/len(Y)) + reg
+        mse.append(this_mse)
+        itr.append(idx)
+    return itr,mse
+
 #BATCH GRADIENT DESCENT
-def BGD(perceptron,epochs,learning_rate,X,Y):
+def BGD(neuron,epochs,learning_rate,X,Y):
     weight_history = []
     error_count = []
-    weights = perceptron.weights
+    weights = neuron.weights
     for itr in range(epochs):
         weight_history.append(weights)
-
-        thisError = 0
-        deriv = np.zeros(perceptron.weight_size)
+        deriv = np.zeros(neuron.weight_size)
         for x,y in zip(X,Y):
-            fx = perceptron.predict(x)
-            if (y != fx):
-                thisError += 1
-            deriv += perceptron.deriv(x,y-fx)
+            fx = neuron.predict(x)
+            deriv += neuron.deriv(x,y-fx)
 
         weights = weights - learning_rate*(deriv/len(Y))
-        error_count.append(thisError)
-        perceptron.set_weights(weights)
+        neuron.set_weights(weights)
 
-    return weight_history,error_count,perceptron
+    return weight_history,neuron
 
 #STOCHASTIC GRADIENT DESCENT
-def SGD(perceptron,epochs,learning_rate,X,Y):
+def SGD(neuron,epochs,learning_rate,X,Y):
     weight_history = []
     error_count = []
-    weights = perceptron.weights
+    weights = neuron.weights
     for itr in range(epochs):
         weight_history.append(weights)
 
-        thisError = 0
-        deriv = np.zeros(perceptron.weight_size)
+        deriv = np.zeros(neuron.weight_size)
         ctr = 0
         for x,y in zip(X,Y):
             ctr+=1
-            fx = perceptron.predict(x)
-            if (y != fx):
-                thisError += 1
-            deriv += perceptron.deriv(x,y-fx)
+            fx = neuron.predict(x)
+            deriv += neuron.deriv(x,y-fx)
             weights = weights - learning_rate*(deriv/ctr)
-            perceptron.set_weights(weights)
+            neuron.set_weights(weights)
 
-        error_count.append(thisError)
-    return weight_history,error_count,perceptron
+    return weight_history,neuron
 
 #MINIBATCH GRADIENT DESCENT
-def MINIBATCH(perceptron,epochs,learning_rate,batch_sz,X,Y):
+def MINIBATCH(neuron,epochs,learning_rate,batch_sz,X,Y):
     weight_history = []
     error_count = []
-    weights = perceptron.weights
+    weights = neuron.weights
     for itr in range(epochs):
         weight_history.append(weights)
 
-        thisError = 0
-        deriv = np.zeros(perceptron.weight_size)
+        deriv = np.zeros(neuron.weight_size)
         ctr = 0
         for x,y in zip(X,Y):
             ctr+=1
-            fx = perceptron.predict(x)
-            if (y != fx):
-                thisError += 1
-            deriv += perceptron.deriv(x,y-fx)
+            fx = neuron.predict(x)
+            deriv += neuron.deriv(x,y-fx)
             if ctr % batch_sz == 0:
                 weights = weights - learning_rate*(deriv/ctr)
-                perceptron.set_weights(weights)
+                neuron.set_weights(weights)
 
-        error_count.append(thisError)
-    return weight_history,error_count,perceptron
+    return weight_history,neuron
