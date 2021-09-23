@@ -1,4 +1,4 @@
-from Perceptron import *
+from Neuron import *
 import numpy as np
 
 def get_mse(n,weight_history,X,Y):
